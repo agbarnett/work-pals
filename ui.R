@@ -5,8 +5,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$h2("Network diagram of investigators"),
-  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications.'),
-
+  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it.'),
   
 strong("If there are missing links then please first check your ", tags$a(href="https://orcid.org/", "ORCID profile"),"as that may need updating."),
 
@@ -19,7 +18,7 @@ p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you f
       numericInput(inputId = "numInvestigators",
                    label = "Number of investigators",
                    min = 2,
-                   max = 7,
+                   max = 10,
                    step = 1,
                    value = 3),
       
@@ -66,34 +65,58 @@ p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you f
                   value='')
       ),
       
-      numericInput(inputId = "box.size",
-                   label = "Box size",
+      conditionalPanel(
+        condition = "input.numInvestigators >= 8",
+        textInput(inputId = "orcid.id8",
+                  label = "ORCID ID (16 digits with 3 dashes)",
+                  value='')
+      ),
+      
+      conditionalPanel(
+        condition = "input.numInvestigators >= 9",
+        textInput(inputId = "orcid.id9",
+                  label = "ORCID ID (16 digits with 3 dashes)",
+                  value='')
+      ),
+      
+      conditionalPanel(
+        condition = "input.numInvestigators >= 10",
+        textInput(inputId = "orcid.id10",
+                  label = "ORCID ID (16 digits with 3 dashes)",
+                  value='')
+      ),
+     
+      # not working as desired 
+    #  checkboxInput(inputId ="include.nums", "Include number of joint publications", TRUE),
+      
+    selectInput("box.type", "Node type",
+                c("Square" = "square",
+                  "Circle" = "circle",
+                  "Diamond" = "diamond",
+                  "Hexagon" = "hexa")),
+    
+    numericInput(inputId = "box.size",
+                   label = "Node size",
                    min = 0.01,
                    max = 1.5,
                    step = 0.01,
                    value = 0.09),
 
       numericInput(inputId = "box.height",
-                   label = "Box height",
+                   label = "Node height",
                    min = 0.01,
                    max = 1.5,
                    step = 0.01,
                    value = 0.45),
       
-      selectInput("box.type", "Box type",
-                  c("Square" = "square",
-                    "Circle" = "circle",
-                    "Diamond" = "diamond",
-                    "Hexagon" = "hexa")),
-
       numericInput(inputId = "box.cex",
-                   label = "Text size",
+                   label = "Text size in node",
                    min = 1,
                    max = 3,
                    step = 0.05,
                    value = 1.25),
       
-      selectInput("text.colour", "Text colour",
+      selectInput("text.colour", "Text colour in node",
                   c("Black" = "black",
                     "White" = "white",
                     "Grey" = "grey",
@@ -101,19 +124,40 @@ p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you f
                     "Red" = "red",
                     "Blue" = "blue")),
       
-      selectInput("box.colour", "Box colour",
+      selectInput("box.colour", "Node fill colour",
                   c("White" = "white",
                     "Grey" = "grey",
                     "Green" = "green",
                   "Red" = "red",
       "Blue" = "blue")),
       
+      selectInput("number.colour", "Node line colour",
+                  c("Black" = "black",
+                    "Grey" = "grey",
+                    "Green" = "green",
+                    "Red" = "red",
+                    "Blue" = "blue"), 'blue'),
+      
 selectInput("line.colour", "Line colour",
             c("Black" = "black",
               "Grey" = "grey",
               "Green" = "green",
             "Red" = "red",
-"Blue" = "blue"))
+"Blue" = "blue"), 'grey'),
+
+numericInput(inputId = "curve",
+             label = "Line curve (0 = straight line)",
+             min = 0.0,
+             max = 1,
+             step = 0.01,
+             value = 0.0),
+
+numericInput(inputId = "dtext",
+             label = "Position of numbers relative to lines",
+             min = 0.01,
+             max = 1.5,
+             step = 0.01,
+             value = 0.3)
 
       ), # end of sidebar panel
     

@@ -4,12 +4,14 @@
 # Version for shiny
 # May 2017
 
+# TO DO, add affiliation, guess from most recent paper?
+
 # set token as an environmental variable (March 2018)
 x <- "07073399-4dcc-47b3-a0a8-925327224519"
 Sys.setenv(ORCID_TOKEN=x)
 
 # main function
-my.network = function(orcid.ids){
+my.network = function(orcid.ids, remove.labels=T){
 
   n.names = length(orcid.ids)
   
@@ -19,8 +21,11 @@ my.network = function(orcid.ids){
     bio = orcid_id(orcid = orcid.ids[k], profile='profile') # get basics
     first = bio[[1]]$`name`$`given-names`$value
     surname = bio[[1]]$`name`$`family-name`$value
+    # add affiliation here?
     name = paste(gsub(' ', '', first), '\n', gsub(' ', '', surname), sep='')
     names = c(names, name)
+    
+    
 
   # b) get works and transform to DOss
     d = works(orcid_id(orcid = orcid.ids[k])) # get works as a tibble
@@ -44,14 +49,16 @@ my.network = function(orcid.ids){
     }
   }
   
-  # remove labels
+  # remove labels (option)
   M.dash = M
-  M.dash[M>0] = "' '"
+  if(remove.labels==T){
+    M.dash[M>0] = "' '"
+  }
   
   # return key results for plotting
   to.return = list()
   to.return$M = M
-  to.return$M.dash = M.dash
+  to.return$M.dash = M
   to.return$names = names
   return(to.return)
 }

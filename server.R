@@ -27,6 +27,15 @@ shinyServer(function(input, output) {
     
     id.no.spaces7 = input$orcid.id7
     id.no.spaces7 = gsub(' $', '', id.no.spaces7) # remove trailing space
+
+    id.no.spaces8 = input$orcid.id8
+    id.no.spaces8 = gsub(' $', '', id.no.spaces8) # remove trailing space
+
+    id.no.spaces9 = input$orcid.id9
+    id.no.spaces9 = gsub(' $', '', id.no.spaces9) # remove trailing space
+
+    id.no.spaces10 = input$orcid.id10
+    id.no.spaces10 = gsub(' $', '', id.no.spaces10) # remove trailing space
     
     validate(
       need(nchar(id.no.spaces1) == 19, 
@@ -38,14 +47,13 @@ shinyServer(function(input, output) {
            paste("ID 2 needs fixing. ORCID IDs should be 16 numbers separated by three dashes, e.g., 0000-0002-2358-2440", sep=''))
     )
     
-    
     # bind IDs
-    ids.no.spaces  = c(id.no.spaces1,id.no.spaces2,id.no.spaces3,id.no.spaces4,id.no.spaces5,id.no.spaces6,id.no.spaces7)
+    ids.no.spaces  = c(id.no.spaces1,id.no.spaces2,id.no.spaces3,id.no.spaces4,id.no.spaces5,id.no.spaces6,id.no.spaces7,id.no.spaces8,id.no.spaces9,id.no.spaces10)
     ids.no.spaces = ids.no.spaces[ids.no.spaces!=''] # remove missing IDs
     
     withProgress(message = 'Getting data from ORCID/Crossref', 
                  detail = 'This may take a while...', value=0, {
-      res = my.network(orcid.ids=ids.no.spaces)
+      res = my.network(orcid.ids=ids.no.spaces) #, remove.labels=input$include.nums)
                    incProgress(1)
     })
     return(res)
@@ -53,40 +61,14 @@ shinyServer(function(input, output) {
   
   # table of papers:
   output$network <- renderPlot({
+    # plot
     par(mai=c(0.02,0.02,0.02,0.02))
-    plotmat(results()$M.dash, name = results()$names, curve=0, arr.width = 0, dtext=0.1, box.col = input$box.colour,
+    plotmat(results()$M.dash, name = results()$names, curve=input$curve, arr.width = 0, box.col = input$box.colour, box.lcol = input$number.colour,
                  box.lwd = 2, cex = 1.1, box.size = input$box.size, shadow.size=0, box.cex=input$box.cex,
                  box.type = input$box.type, txt.col = input$text.colour,
+            dtext=input$dtext,
             box.prop = input$box.height, arr.lcol=input$line.colour, arr.lwd=results()$M)
     
     })
-  
-  # report for download; see https://shiny.rstudio.com/articles/generating-reports.html
-  # and here http://stackoverflow.com/questions/37018983/how-to-make-pdf-download-in-shiny-app-response-to-user-inputs
-  output$report <- downloadHandler(
-    filename = function(){
-      paste("report.docx", sep='') # could expand, e.g., see here: 
-    },
-    content = function(file){
-      
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
-      tempReport <- file.path(tempdir(), "report.Rmd")
-      #tempReport <- "C:/temp/report.Rmd"
-      file.copy("report.Rmd", tempReport, overwrite = TRUE)
-      
-      params = list(orcid.id = input$orcid.id, 
-           style = input$style)
-      
-      out = rmarkdown::render(
-          input = tempReport,
-          output_file = file,
-          params = params,
-          envir = new.env(parent = globalenv())
-        ) 
-      file.rename(out, file)
-    }
-  )
   
 })
