@@ -5,13 +5,13 @@ shinyUI(fluidPage(
   
   # Application title
   tags$h2("Network diagram of investigators"),
-  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it.'),
+  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it. The diagram is drawn using the ', tags$a(href="https://cran.r-project.org/web/packages/diagram/index.html", "diagram package"), '.'),
   
 strong("If there are missing links then please first check your ", tags$a(href="https://orcid.org/", "ORCID profile"),"as that may need updating."),
 
-       p("The list will only include public works data on the ORCID record. I cannot guarantee that the estimated number of joint papers are correct or complete."),
+       p("The diagram will only include public works from the ORCID record that have a DOI. I cannot guarantee that the estimated number of joint papers are correct or complete."),
 
-p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you find a bug or have any suggested improvements.', sep=''),
+p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you find a bug or have any suggested improvements. You might also like my ', tags$a(href="https://aushsi.shinyapps.io/orcid/", "other app"), "that creates a list researcher`s papers.", sep=''),
 
   sidebarLayout(
     sidebarPanel(
@@ -162,7 +162,9 @@ numericInput(inputId = "dtext",
       ), # end of sidebar panel
     
     mainPanel(
-      plotOutput(outputId = 'network')
+      plotOutput(outputId = 'network'),
+      h3('Warnings:'),
+      textOutput(outputId = 'warnings')
     ) # end of main panel
 
 )))

@@ -59,7 +59,7 @@ shinyServer(function(input, output) {
     return(res)
   })
   
-  # table of papers:
+  # plot:
   output$network <- renderPlot({
     # plot
     par(mai=c(0.02,0.02,0.02,0.02))
@@ -70,5 +70,12 @@ shinyServer(function(input, output) {
             box.prop = input$box.height, arr.lcol=input$line.colour, arr.lwd=results()$M)
     
     })
+
+  # warnings
+  output$warnings <- renderText({
+    if(is.null(results()$warnings)==T){text = 'No warnings'}
+    if(is.null(results()$warnings)==F){text = results()$warnings}
+    return(text)
+  })
   
 })
