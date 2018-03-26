@@ -5,7 +5,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$h2("Network diagram of investigators"),
-  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it. The diagram is drawn using the ', tags$a(href="https://cran.r-project.org/web/packages/diagram/index.html", "diagram package"), '.'),
+  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it. The diagram is drawn using the ', tags$a(href="https://cran.r-project.org/web/packages/diagram/index.html", "diagram package"), '.', sep=''),
   
 strong("If there are missing links then please first check your ", tags$a(href="https://orcid.org/", "ORCID profile"),"as that may need updating."),
 
@@ -157,7 +157,10 @@ numericInput(inputId = "dtext",
              min = 0.01,
              max = 1.5,
              step = 0.01,
-             value = 0.3)
+             value = 0.3),
+
+# report
+downloadButton("report", "Generate Word document")
 
       ), # end of sidebar panel
     

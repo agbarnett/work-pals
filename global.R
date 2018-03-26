@@ -1,5 +1,5 @@
 library(shiny)
 library(rorcid)
-library(rmarkdown)
 library(diagram)
-library(rcrossref)
+library(ggplot2)
+library(rmarkdown)

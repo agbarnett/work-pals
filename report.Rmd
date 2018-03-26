@@ -1,29 +1,47 @@
-# network.R
-# Take ORCID IDs and make a network diagram in shiny
-# March 2018
+---
+title: "Network diagram from ORCID"
+author: Adrian Barnett
+date: "`r format(Sys.time(), '%d %B %Y')`"
+fontsize: 12pt
+output: word_document
+params:
+  orcid.ids1: NA
+  orcid.ids2: NA
+  orcid.ids3: NA
+  orcid.ids4: NA
+  orcid.ids5: NA
+  orcid.ids6: NA
+  orcid.ids7: NA
+  orcid.ids8: NA
+  orcid.ids9: NA
+  orcid.ids10: NA
+  curve: NA
+  dtext: NA
+  line.colour: NA
+  box.colour: NA
+  number.colour: NA
+  text.colour: NA
+  box.cex: NA
+  box.height: NA
+  box.size: NA
+  box.type: NA
+---
 
-# examples
-# orcid.ids = c('0000-0003-3637-2423','0000-0001-6339-0374','0000-0002-5559-3267') # me, Nick, Anisa
-# orcid.ids = c('0000-0002-0104-5679','0000-0001-8846-216X','0000-0002-2512-7724')
-# orcid.ids = c('0000-0001-8846-216X','0000-0001-6339-0374','0000-0002-5559-3267')
-# orcid.ids = c('0000-0002-2787-8484','0000-0001-8162-682X')
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
+# next two lines for testing:
+#library(rorcid)
+#orcid.ids = c('0000-0003-3637-2423','0000-0001-6339-0374','0000-0002-5559-3267') # me, Nick, Anisa
+```
 
-# TO DO, add affiliations, guess from most recent paper?
-
-# set token as an environmental variable (March 2018)
-x <- "07073399-4dcc-47b3-a0a8-925327224519"
-Sys.setenv(ORCID_TOKEN=x)
-
-# main function
-my.network = function(orcid.ids, remove.labels=T){
-  warnings = NULL
+```{r main.function, include=FALSE}
+    orcid.ids  = c(params$orcid.ids1,params$orcid.ids2,params$orcid.ids3,params$orcid.ids4)
+    orcid.ids = orcid.ids[orcid.ids!=''] # remove missing IDs
   n.names = length(orcid.ids)
   
   # check for repeated ORCID
   if(any(table(orcid.ids) > 1)){
     repeated = names(which(table(orcid.ids)>1))
-    warn = paste('Repeated ORCIDs for ', repeated, '.\n', sep='')
-    warnings = c(warnings, warn)
     # remove repeats
     orcid.ids = unique(orcid.ids)
     n.names = length(orcid.ids)
@@ -42,14 +60,11 @@ my.network = function(orcid.ids, remove.labels=T){
   # b) get works and transform to DOss
     d = works(orcid_id(orcid = orcid.ids[k])) # get works as a tibble
     if(nrow(d)==0){
-      warn = paste('No public works for ', gsub('\n', ' ', name), '\n.', sep='')
-      warnings = c(warnings, warn)
       # reduce number of names
       n.names = n.names - 1 
     }
     if(nrow(d)>0){
       person.number = person.number + 1
-    #  cat('person.number', person.number,'\n')
       names = c(names, name) # add to list of names
       dois = identifiers(d, type='doi') # get DOIs, not available for all papers
       dois = dois[duplicated(dois)==F]
@@ -76,17 +91,19 @@ my.network = function(orcid.ids, remove.labels=T){
     }
   }
   
-  # remove labels (option)
-  M.dash = M
-  if(remove.labels==T){
-    M.dash[M>0] = "' '"
-  }
-  
-  # return key results for plotting
-  to.return = list()
-  to.return$M = M
-  to.return$M.dash = M
-  to.return$names = names
-  to.return$warnings = warnings
-  return(to.return)
-}
+```
+
+
+```{r plot, fig.width=6, fig.height=5}
+    # plot
+    par(mai=c(0.02,0.02,0.02,0.02))
+    plotmat(M, name = names, 
+            curve=params$curve, arr.width = 0, 
+            box.col = params$box.colour, box.lcol = params$number.colour,
+                 box.lwd = 2, cex = 1.1, 
+            box.size = params$box.size, shadow.size=0, box.cex=params$box.cex,
+                 box.type = params$box.type, txt.col = params$text.colour,
+            dtext=params$dtext,
+            box.prop = params$box.height, arr.lcol=params$line.colour, 
+            arr.lwd=M)
+```
