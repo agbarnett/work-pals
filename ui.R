@@ -5,7 +5,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$h2("Network diagram of investigators"),
-  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Right click on the graph to save it. The diagram is drawn using the ', tags$a(href="https://cran.r-project.org/web/packages/diagram/index.html", "diagram package"), '.', sep=''),
+  p("Input your researchers` ", tags$a(href="https://orcid.org/content/orcid-public-data-file", "ORCID IDs"), ' and a diagram will be drawn with the width of the line proportional to the number of joint publications. Use the download options to save the file in Word or as a figure. The diagram is drawn using the ', tags$a(href="https://cran.r-project.org/web/packages/diagram/index.html", "diagram package"), '.', sep=''),
   
 strong("If there are missing links then please first check your ", tags$a(href="https://orcid.org/", "ORCID profile"),"as that may need updating."),
 
@@ -160,7 +160,38 @@ numericInput(inputId = "dtext",
              value = 0.3),
 
 # report
-downloadButton("report", "Generate Word document")
+h4("Downloads:"),
+
+downloadButton("report", "Word document"),
+
+selectInput("fformat", "Figure format",
+            c("png" = "png",
+              "tiff" = "tiff",
+              "pdf" = "pdf",
+              "jpeg" = "jpeg"), 'png'),
+
+numericInput(inputId = "fheight",
+             label = "Figure height (cms)",
+             min = 8,
+             max = 22,
+             step = 1,
+             value = 10),
+
+numericInput(inputId = "fwidth",
+             label = "Figure width (cms)",
+             min = 8,
+             max = 22,
+             step = 1,
+             value = 15),
+
+numericInput(inputId = "fres",
+             label = "Figure resolution (dots per inch)",
+             min = 100,
+             max = 600,
+             step = 100,
+             value = 300),
+
+downloadButton("figure", "Figure")
 
       ), # end of sidebar panel
     

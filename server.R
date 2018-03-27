@@ -78,10 +78,10 @@ shinyServer(function(input, output) {
     return(text)
   })
   
-  # report
+  # report in word
   output$report <- downloadHandler(
     filename = function(){
-      paste("report.docx", sep='') # 
+      paste("network.diagram.docx", sep='') # 
     },
     content = function(file){
       
@@ -121,5 +121,52 @@ shinyServer(function(input, output) {
       file.rename(out, file)
     }
   )
+
+  # figure
+  # see https://stackoverflow.com/questions/30879084/r-shiny-download-different-image-formats
+  fn_download <- function()
+  {
+    fheight <- input$fheight
+    fwidth <- input$fwidth
+    fres <- as.numeric(input$fres)
+    
+    if(input$fformat=="pdf") fheight <- round(fheight*0.3937,2)
+    if(input$fformat=="pdf") fwidth <- round(fwidth*0.3937,2)
+
+    # open file dependent on format    
+    if(input$fformat=="png") png(fn_downloadname(), height=fheight, width=fwidth, res=fres, units="cm")
+    if(input$fformat=="tiff") tiff(fn_downloadname(), height=fheight, width=fwidth, res=fres, units="cm", compression="lzw")
+    if(input$fformat=="jpeg") jpeg(fn_downloadname(), height=fheight, width=fwidth, res=fres, units="cm", quality=100)
+    if(input$fformat=="pdf") pdf(fn_downloadname(), height=fheight, width=fwidth)
+  
+    par(mai=rep(0.02, 4))
+    plotmat(results()$M.dash, name = results()$names, curve=input$curve, arr.width = 0, box.col = input$box.colour, box.lcol = input$number.colour,
+            box.lwd = 2, cex = 1.1, box.size = input$box.size, shadow.size=0, box.cex=input$box.cex,
+            box.type = input$box.type, txt.col = input$text.colour,
+            dtext=input$dtext,
+            box.prop = input$box.height, arr.lcol=input$line.colour, arr.lwd=results()$M)
+    dev.off()
+  }
+  
+  # create filename
+  fn_downloadname <- reactive({
+    
+    fname = 'network.diagram'
+    if(input$fformat=="png") filename <- paste0(fname,".png",sep="")
+    if(input$fformat=="tiff") filename <- paste0(fname,".tif",sep="")
+    if(input$fformat=="jpeg") filename <- paste0(fname,".jpg",sep="")
+    if(input$fformat=="pdf") filename <- paste0(fname,".pdf",sep="")
+    return(filename)
+  })
+  
+  # download handler
+  output$figure <- downloadHandler(
+    filename = fn_downloadname,
+    content = function(file) {
+      fn_download()
+      file.copy(fn_downloadname(), file, overwrite=T)
+    }
+  )  
+  
   
 })
