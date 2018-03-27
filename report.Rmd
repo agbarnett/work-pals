@@ -35,7 +35,7 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
 ```
 
 ```{r main.function, include=FALSE}
-    orcid.ids  = c(params$orcid.ids1,params$orcid.ids2,params$orcid.ids3,params$orcid.ids4)
+    orcid.ids  = c(params$orcid.ids1,params$orcid.ids2,params$orcid.ids3,params$orcid.ids4,params$orcid.ids5,params$orcid.ids6,params$orcid.ids7,params$orcid.ids8,params$orcid.ids9,params$orcid.ids10)
     orcid.ids = orcid.ids[orcid.ids!=''] # remove missing IDs
   n.names = length(orcid.ids)
   
@@ -90,13 +90,12 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
       }
     }
   }
-  
 ```
 
 
 ```{r plot, fig.width=6, fig.height=5}
     # plot
-    par(mai=c(0.02,0.02,0.02,0.02))
+    par(mai=c(0.01,0.01,0.01,0.01))
     plotmat(M, name = names, 
             curve=params$curve, arr.width = 0, 
             box.col = params$box.colour, box.lcol = params$number.colour,
