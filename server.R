@@ -138,6 +138,7 @@ shinyServer(function(input, output) {
                     orcid.ids8 = input$orcid.id8, 
                     orcid.ids9 = input$orcid.id9, 
                     orcid.ids10 = input$orcid.id10, 
+                    orcid.file = input$orcid.file,
                     curve = input$curve,
                     dtext = input$dtext,
                     line.colour = input$line.colour,

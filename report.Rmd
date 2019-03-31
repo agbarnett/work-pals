@@ -15,6 +15,9 @@ params:
   orcid.ids8: NA
   orcid.ids9: NA
   orcid.ids10: NA
+  orcid.file:
+    input: NA
+    value: NA
   curve: NA
   dtext: NA
   line.colour: NA
@@ -35,8 +38,16 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
 ```
 
 ```{r main.function, include=FALSE}
-    orcid.ids  = c(params$orcid.ids1,params$orcid.ids2,params$orcid.ids3,params$orcid.ids4,params$orcid.ids5,params$orcid.ids6,params$orcid.ids7,params$orcid.ids8,params$orcid.ids9,params$orcid.ids10)
-    orcid.ids = orcid.ids[orcid.ids!=''] # remove missing IDs
+# ORCIDs inputed by user
+    orcid.ids  = c(params$orcid.ids1, params$orcid.ids2, params$orcid.ids3, params$orcid.ids4, params$orcid.ids5, params$orcid.ids6, params$orcid.ids7, params$orcid.ids8, params$orcid.ids9, params$orcid.ids10)
+# overwrite with ORCIDs from file if they exist
+  inFile = params$orcid.file
+  if (is.null(inFile)==FALSE){ # if file exists
+      multiple.orcids = read.table(inFile$datapath, header=FALSE, stringsAsFactors=FALSE) # must use datapath that points to temporary file
+      orcid.ids = multiple.orcids$V1
+  }
+
+  orcid.ids = orcid.ids[orcid.ids!=''] # remove missing IDs
   n.names = length(orcid.ids)
   
   # check for repeated ORCID
@@ -73,6 +84,8 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
       all.dois = rbind(all.dois, frame)
     }
   }
+  # switch DOIs to lower case as this helps with matching
+  all.dois$dois = tolower(all.dois$dois)
   
   # matrix M of links
   M = matrix(nrow = n.names, ncol = n.names, byrow = TRUE, data = 0)
@@ -92,7 +105,6 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
   }
 ```
 
-
 ```{r plot, fig.width=6, fig.height=5}
     # plot
     par(mai=c(0.01,0.01,0.01,0.01))
@@ -106,3 +118,4 @@ knitr::opts_chunk$set(echo = FALSE, warnings=FALSE, comment='', dpi = 400)
             box.prop = params$box.height, arr.lcol=params$line.colour, 
             arr.lwd=M)
 ```
+
