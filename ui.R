@@ -93,7 +93,7 @@ p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you f
                 accept = c(
                   "text/comma-separated-values,text/plain",
                   ".txt"),
-                label = '... or attach text file with two or more ORCID IDs'),
+                label = '... or upload text file with two or more ORCID IDs'),
       
       # not working as desired 
     #  checkboxInput(inputId ="include.nums", "Include number of joint publications", TRUE),
