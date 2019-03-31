@@ -1,21 +1,23 @@
 # network.R
 # Take ORCID IDs and make a network diagram in shiny
-# March 2018
+# March 2019
+# TO DO, add affiliations, guess from most recent paper?
 
 # examples
-# orcid.ids = c('0000-0003-3637-2423','0000-0001-6339-0374','0000-0002-5559-3267') # me, Nick, Anisa
-# orcid.ids = c('0000-0002-0104-5679','0000-0001-8846-216X','0000-0002-2512-7724')
-# orcid.ids = c('0000-0001-8846-216X','0000-0001-6339-0374','0000-0002-5559-3267')
-# orcid.ids = c('0000-0002-2787-8484','0000-0001-8162-682X')
-
-# TO DO, add affiliations, guess from most recent paper?
+# orcid.ids = c('0000-0003-3637-2423','0000-0001-6339-0374','0000-0002-5559-3267','0000-0001-6463-6719') # me, Nick, Anisa, Nina
+#orcid.ids = c('0000-0001-6339-0374', # adrian
+#              '0000-0003-3400-2816', # james
+#              '0000-0003-3205-9165', # ingrid Hickman
+#              '0000-0001-5650-154X', # Sanj
+#              '0000-0001-5008-8061', # powell
+#              '0000-0002-6612-348X') # David 
 
 # set token as an environmental variable (March 2018)
 x <- "07073399-4dcc-47b3-a0a8-925327224519"
 Sys.setenv(ORCID_TOKEN=x)
 
 # main function
-my.network = function(orcid.ids, remove.labels=T){
+my.network = function(orcid.ids, remove.labels=TRUE){
   warnings = NULL
   n.names = length(orcid.ids)
   
@@ -41,13 +43,13 @@ my.network = function(orcid.ids, remove.labels=T){
  
   # b) get works and transform to DOss
     d = works(orcid_id(orcid = orcid.ids[k])) # get works as a tibble
-    if(nrow(d)==0){
+    if(nrow(d) == 0){
       warn = paste('No public works for ', gsub('\n', ' ', name), '\n.', sep='')
       warnings = c(warnings, warn)
       # reduce number of names
       n.names = n.names - 1 
     }
-    if(nrow(d)>0){
+    if(nrow(d) > 0){
       person.number = person.number + 1
     #  cat('person.number', person.number,'\n')
       names = c(names, name) # add to list of names
@@ -58,6 +60,8 @@ my.network = function(orcid.ids, remove.labels=T){
       all.dois = rbind(all.dois, frame)
     }
   }
+  # switch DOIs to lower case as this helps with matching
+  all.dois$dois = tolower(all.dois$dois)
   
   # matrix M of links
   M = matrix(nrow = n.names, ncol = n.names, byrow = TRUE, data = 0)
