@@ -5,8 +5,37 @@ shinyServer(function(input, output) {
   
   source('network.R')
 
-  # reactive function to get publication data
-  results <- reactive({
+  # reactive function to get publication data when user has uploaded a file
+  yes.file = reactive({
+    inFile <- input$orcid.file
+    if (is.null(inFile)==TRUE){return(NULL)} # stop here if no file
+    if (is.null(inFile)==FALSE){
+      multiple.orcids = read.table(inFile$datapath, header=FALSE)
+    }
+    n.people = nrow(multiple.orcids)
+    
+    # loop through people
+    ids.no.spaces = NULL
+    for (k in 1:n.people){
+      id.no.spaces1 = gsub(' $', '', multiple.orcids$V1[k])
+      validate(
+        need(nchar(id.no.spaces1) == 19, 
+             paste("ORCID IDs should be 16 numbers or X's separated by three dashes, e.g., 0000-0001-7564-073X", sep=''))
+      )
+      ids.no.spaces = c(ids.no.spaces, id.no.spaces1)
+    }
+    
+    # get data
+    withProgress(message = 'Getting data from ORCID', 
+                 detail = 'This may take a while...', value=0, {
+                   res = my.network(orcid.ids = ids.no.spaces) #, remove.labels=input$include.nums)
+                   incProgress(1)
+                 })
+    return(res)
+  })
+  
+  # reactive function to get publication data where user has inputed IDs
+  no.file <- reactive({
     id.no.spaces1 = input$orcid.id1
     id.no.spaces1 = gsub(' $', '', id.no.spaces1) # remove trailing space
 
@@ -57,6 +86,14 @@ shinyServer(function(input, output) {
                    incProgress(1)
     })
     return(res)
+  })
+  
+  # results that select either single ORCID input or file
+  results <- reactive({
+    inFile <- input$orcid.file
+    if (is.null(inFile)==TRUE){o = no.file(); o$type = 'single'} #
+    if (is.null(inFile)==FALSE){o = yes.file(); o$type = 'multiple'} #
+    return(o)
   })
   
   # plot:

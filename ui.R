@@ -11,6 +11,9 @@ strong("If there are missing links then please first check your ", tags$a(href="
 
        p("The diagram will only include public works from the ORCID record that have a DOI. I cannot guarantee that the estimated number of joint papers are correct or complete."),
 
+p("You can also upload a plain text file with one orcid ID per row, with no headers or footers (", 
+  tags$a(href="https://github.com/agbarnett/work-pals/blob/master/example.orcids.txt", "see here"), "for an example file).", sep=''),
+
 p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you find a bug or have any suggested improvements. You might also like my ', tags$a(href="https://aushsi.shinyapps.io/orcid/", "other app"), "that creates a list researcher`s papers.", sep=''),
 
   sidebarLayout(
@@ -85,7 +88,13 @@ p("Please ", tags$a(href='mailto:a.barnett@qut.edu.au', 'e-mail'), ' me if you f
                   label = "ORCID ID (16 digits with 3 dashes)",
                   value='')
       ),
-     
+
+      fileInput(inputId = 'orcid.file',
+                accept = c(
+                  "text/comma-separated-values,text/plain",
+                  ".txt"),
+                label = '... or attach text file with two or more ORCID IDs'),
+      
       # not working as desired 
     #  checkboxInput(inputId ="include.nums", "Include number of joint publications", TRUE),
       
